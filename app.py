@@ -10,7 +10,7 @@ from sklearn.ensemble import RandomForestRegressor
 # 1. 웹 페이지 기본 설정 및 스타일 캐싱
 st.set_page_config(page_title="머신러닝 보행 내비게이션", layout="wide")
 
-st.title(" AI 기반 스마트 보행 지도")
+st.title("🧠 AI 기반 스마트 보행 지도")
 st.markdown("### 지형 불평등과 고령층을 위한 안전 경로 예측 시스템")
 st.markdown("---")
 
@@ -107,10 +107,13 @@ with st.spinner("보행 도로 데이터를 구성하는 중..."):
 
 if G is None: st.stop()
 
-# 💡 [변경] 사이드바에 있던 초기화 버튼 코드가 제거되었습니다.
-
 st.sidebar.markdown("---")
-st.sidebar.info("💡 **[클릭 방법]**\n\n지도 위를 마우스로 **첫 번째 클릭하면 출발지**, **두 번째 클릭하면 도착지**가 지정됩니다.")
+st.sidebar.info("💡 **[클릭 방법]**\n\n지도 위를 마우스로 **첫 번째 클릭하면 출발지(블루)**, **두 번째 클릭하면 도착지(레드)**가 지정됩니다.")
+
+# 🛠️ [핵심 추가] 사이드바 맨 아래(앱의 왼쪽 아래)에 제작자 정보를 고정합니다.
+st.sidebar.markdown("<br><br><br><br><br>", unsafe_allow_html=True) # 공백을 주어 맨 아래로 밀어냄
+st.sidebar.markdown("---")
+st.sidebar.caption("👤 **Developed by. 김민찬 & 김성현**")
 
 # 6. 대시보드 데이터 연산
 col1, col2 = st.columns([1, 2.3])
@@ -121,7 +124,7 @@ if st.session_state.start_coord and st.session_state.end_coord:
     start_node = ox.nearest_nodes(G, X=st.session_state.start_coord[1], Y=st.session_state.start_coord[0])
     end_node = ox.nearest_nodes(G, X=st.session_state.end_coord[1], Y=st.session_state.end_coord[0])
     try:
-        if route_type == "안정 경사 경로 (안전)":  # 원본 조건문 텍스트 매칭 수정
+        if route_type == "안정 경사 경로 (안전)":
             path = nx.shortest_path(G, source=start_node, target=end_node, weight='ml_safety_weight')
         else:
             path = nx.shortest_path(G, source=start_node, target=end_node, weight='length')
@@ -144,7 +147,6 @@ with col1:
         st.warning("📍 지도를 클릭하여 [출발지]를 지정해 주세요.")
     elif st.session_state.end_coord is None:
         st.info("🏁 지도를 한 번 더 클릭하여 [도착지]를 지정해 주세요.")
-        # 출발지만 찍혔을 때도 언제든 리셋할 수 있게 초기화 버튼을 노출합니다.
         if st.button("🔄 검색 초기화", use_container_width=True):
             st.session_state.start_coord = None
             st.session_state.end_coord = None
@@ -157,15 +159,14 @@ with col1:
         
         st.markdown("---")
         st.markdown("#### 🚨 AI 학습 모델 예측 위험도")
-        if max_predicted_fatigue >= 65: danger_lbl, danger_cls = "🔴 고위험", "red"
-        elif max_predicted_fatigue >= 35: danger_lbl, danger_cls = "🟠 주의 ", "orange"
-        else: danger_lbl, danger_cls = "🟢 안전 ", "green"
+        if max_predicted_fatigue >= 65: danger_lbl, danger_cls = "🔴 고위험 (어르신 통행 차단 수준)", "red"
+        elif max_predicted_fatigue >= 35: danger_lbl, danger_cls = "🟠 주의 (보행 피로도 증가 구간)", "orange"
+        else: danger_lbl, danger_cls = "🟢 안전 (교통약자 권장 평탄 코스)", "green"
             
         st.markdown(f"<div style='padding: 15px; border-left: 5px solid {danger_cls}; background-color: #f9f9f9; font-weight: bold;'>{danger_lbl}</div>", unsafe_allow_html=True)
         st.markdown(f"*예측 최고 보행 피로도 점수: `{max_predicted_fatigue:.1f} / 100점`*")
         
         st.markdown("---")
-        # ✨ [핵심 수정 위치] 경로 탐색 완료 데이터 아래에 넓은 리셋 버튼을 생성합니다.
         if st.button("🔄 검색 초기화", use_container_width=True):
             st.session_state.start_coord = None
             st.session_state.end_coord = None
