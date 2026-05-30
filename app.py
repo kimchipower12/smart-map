@@ -99,7 +99,7 @@ if 'current_region' not in st.session_state or st.session_state.current_region !
 show_safety_layer = st.sidebar.checkbox("경사도 표시", value=True)
 
 st.sidebar.markdown("---")
-st.sidebar.subheader("🧭 지도션 검색 모드")
+st.sidebar.subheader("🧭 지도 검색 모드")
 route_type = st.sidebar.radio("안내 모드 선택", ["안정 경사 경로 ", "최단 거리 경로 "])
 
 with st.spinner("보행 도로 데이터를 구성하는 중..."):
