@@ -10,7 +10,7 @@ from sklearn.ensemble import RandomForestRegressor
 # 1. 웹 페이지 기본 설정 및 스타일 캐싱
 st.set_page_config(page_title="머신러닝 보행 내비게이션", layout="wide")
 
-st.title("🧠 AI 기반 스마트 보행 지도")
+st.title(" AI 기반 스마트 보행 지도")
 st.markdown("### 지형 불평등과 고령층을 위한 안전 경로 예측 시스템")
 st.markdown("---")
 
