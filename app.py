@@ -8,7 +8,7 @@ import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 
 # 1. 웹 페이지 기본 설정 및 스타일 캐싱
-st.set_page_config(page_title="머신러닝 보행 내비게이션", layout="wide")
+st.set_page_config(page_title="머신러닝 보행 지도", layout="wide")
 
 st.title(" AI 기반 스마트 보행 지도")
 st.markdown("### 지형 불평등과 고령층을 위한 안전 경로 예측 시스템")
@@ -83,7 +83,7 @@ if 'end_coord' not in st.session_state: st.session_state.end_coord = None
 if 'last_clicked' not in st.session_state: st.session_state.last_clicked = None
 
 # 5. 사이드바 UI
-st.sidebar.header("⚙️ 내비게이션 설정")
+st.sidebar.header("⚙️ 지도 설정")
 region_option = st.sidebar.selectbox(
     "🗺️ 대상 지역 선택", 
     ["성남시 수정구 태평동 ", "성남시 분당구 판교동 "]
@@ -99,7 +99,7 @@ if 'current_region' not in st.session_state or st.session_state.current_region !
 show_safety_layer = st.sidebar.checkbox("경사도 표시", value=True)
 
 st.sidebar.markdown("---")
-st.sidebar.subheader("🧭 내비게이션 검색 모드")
+st.sidebar.subheader("🧭 지도션 검색 모드")
 route_type = st.sidebar.radio("안내 모드 선택", ["안정 경사 경로 ", "최단 거리 경로 "])
 
 with st.spinner("보행 도로 데이터를 구성하는 중..."):
@@ -142,7 +142,7 @@ if st.session_state.start_coord and st.session_state.end_coord:
 
 # 왼쪽: 결과 패널
 with col1:
-    st.subheader("📋 내비게이션 결과")
+    st.subheader("📋 지도 결과")
     if st.session_state.start_coord is None:
         st.warning("📍 지도를 클릭하여 [출발지]를 지정해 주세요.")
     elif st.session_state.end_coord is None:
@@ -181,7 +181,7 @@ with col1:
 
 # 오른쪽: 지도
 with col2:
-    st.subheader(" 내비게이션 맵")
+    st.subheader(" 지도 ")
     nodes_dict = list(G.nodes(data=True))
     init_lat, init_lng = nodes_dict[0][1]['y'], nodes_dict[0][1]['x']
     
