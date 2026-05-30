@@ -96,7 +96,7 @@ if 'current_region' not in st.session_state or st.session_state.current_region !
     st.session_state.last_clicked = None
     st.session_state.current_region = region_option
 
-show_safety_layer = st.sidebar.checkbox("🎨 지도에 경사도별 안전도 색상 표시", value=True)
+show_safety_layer = st.sidebar.checkbox("경사도 표시", value=True)
 
 st.sidebar.markdown("---")
 st.sidebar.subheader("🧭 내비게이션 검색 모드")
