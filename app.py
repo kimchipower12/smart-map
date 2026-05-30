@@ -159,12 +159,12 @@ with col1:
         
         st.markdown("---")
         st.markdown("#### 🚨 AI 학습 모델 예측 위험도")
-        if max_predicted_fatigue >= 65: danger_lbl, danger_cls = "🔴 고위험 (어르신 통행 차단 수준)", "red"
-        elif max_predicted_fatigue >= 35: danger_lbl, danger_cls = "🟠 주의 (보행 피로도 증가 구간)", "orange"
-        else: danger_lbl, danger_cls = "🟢 안전 (교통약자 권장 평탄 코스)", "green"
+        if max_predicted_fatigue >= 65: danger_lbl, danger_cls = "🔴 고위험 ", "red"
+        elif max_predicted_fatigue >= 35: danger_lbl, danger_cls = "🟠 주의 )", "orange"
+        else: danger_lbl, danger_cls = "🟢 안전", "green"
             
         st.markdown(f"<div style='padding: 15px; border-left: 5px solid {danger_cls}; background-color: #f9f9f9; font-weight: bold;'>{danger_lbl}</div>", unsafe_allow_html=True)
-        st.markdown(f"*예측 최고 보행 피로도 점수: `{max_predicted_fatigue:.1f} / 100점`*")
+        st.markdown(f"*보행 피로도 예측 : `{max_predicted_fatigue:.1f} / 100점`*")
         
         st.markdown("---")
         if st.button("🔄 검색 초기화", use_container_width=True):
