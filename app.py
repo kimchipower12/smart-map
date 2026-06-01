@@ -10,7 +10,7 @@ from sklearn.ensemble import RandomForestRegressor
 # 1. 웹 페이지 기본 설정 및 스타일 캐싱
 st.set_page_config(page_title="머신러닝 보행 지도", layout="wide")
 
-st.title(" AI 기반 스마트 보행 지도")
+st.title("🧠 AI 기반 스마트 보행 지도")
 st.markdown("### 지형 불평등과 고령층을 위한 안전 경로 예측 시스템")
 st.markdown("---")
 
@@ -46,7 +46,8 @@ def get_ml_network(region_choice):
         is_hilly = False
         
     try:
-        G = ox.graph_from_point(center_point, dist=dist, network_type='walk')
+        # 💡 network_type='all'로 변경하여 판교의 바둑판 도로망을 촘촘하게 가져옵니다.
+        G = ox.graph_from_point(center_point, dist=dist, network_type='all')
         G = ox.project_graph(G, to_crs='EPSG:4326')
         
         np.random.seed(42)
@@ -57,7 +58,9 @@ def get_ml_network(region_choice):
                 stairs = 1 if slope > 12 and np.random.rand() > 0.4 else 0
                 sidewalk = np.random.choice([0, 1, 2], p=[0.3, 0.5, 0.2])
             else:
-                slope = np.random.uniform(0.0, 3.0)
+                # 💡 판교 데이터 현실 고증: PPT 분석 결과(평균 7.16도, 평지 61%)와 유사하게 
+                # 대부분 평지(0~5도)이되, 간혹 5~12도 사이의 주황색 '주의' 구간이 섞이도록 수정했습니다.
+                slope = np.random.choice([np.random.uniform(0.0, 4.9), np.random.uniform(5.0, 10.0)], p=[0.65, 0.35])
                 stairs = 0
                 sidewalk = np.random.choice([0, 1, 2], p=[0.8, 0.15, 0.05])
                 
@@ -86,7 +89,7 @@ if 'last_clicked' not in st.session_state: st.session_state.last_clicked = None
 st.sidebar.header("⚙️ 지도 설정")
 region_option = st.sidebar.selectbox(
     "🗺️ 대상 지역 선택", 
-    ["성남시 수정구 태평동 ", "성남시 분당구 판교동 "]
+    ["성남시 수정구 태평동", "성남시 분당구 판교동"]
 )
 
 # 지역 변경 시 자동 리셋
@@ -100,7 +103,7 @@ show_safety_layer = st.sidebar.checkbox("경사도 표시", value=True)
 
 st.sidebar.markdown("---")
 st.sidebar.subheader("🧭 지도 검색 모드")
-route_type = st.sidebar.radio("안내 모드 선택", ["안정 경사 경로 ", "최단 거리 경로 "])
+route_type = st.sidebar.radio("안내 모드 선택", ["안정 경사 경로", "최단 거리 경로"])
 
 with st.spinner("보행 도로 데이터를 구성하는 중..."):
     G = get_ml_network(region_option)
@@ -110,8 +113,8 @@ if G is None: st.stop()
 st.sidebar.markdown("---")
 st.sidebar.info("💡 **[클릭 방법]**\n\n지도 위를 마우스로 **첫 번째 클릭하면 출발지**, **두 번째 클릭하면 도착지**가 지정됩니다.")
 
-# 🛠️ [핵심 추가] 사이드바 맨 아래(앱의 왼쪽 아래)에 제작자 정보를 고정합니다.
-st.sidebar.markdown("<br><br><br><br><br>", unsafe_allow_html=True) # 공백을 주어 맨 아래로 밀어냄
+# 🛠️ 사이드바 맨 아래(앱의 왼쪽 아래)에 제작자 정보 고정
+st.sidebar.markdown("<br><br><br><br><br>", unsafe_allow_html=True)
 st.sidebar.markdown("---")
 st.sidebar.caption("👤 **Developed by. 김민찬 & 김성현**")
 
@@ -124,7 +127,7 @@ if st.session_state.start_coord and st.session_state.end_coord:
     start_node = ox.nearest_nodes(G, X=st.session_state.start_coord[1], Y=st.session_state.start_coord[0])
     end_node = ox.nearest_nodes(G, X=st.session_state.end_coord[1], Y=st.session_state.end_coord[0])
     try:
-        if route_type == "안정 경사 경로 (안전)":
+        if route_type == "안정 경사 경로":
             path = nx.shortest_path(G, source=start_node, target=end_node, weight='ml_safety_weight')
         else:
             path = nx.shortest_path(G, source=start_node, target=end_node, weight='length')
@@ -160,7 +163,7 @@ with col1:
         st.markdown("---")
         st.markdown("#### 🚨 AI 학습 모델 예측 위험도")
         if max_predicted_fatigue >= 65: danger_lbl, danger_cls = "🔴 고위험 ", "red"
-        elif max_predicted_fatigue >= 35: danger_lbl, danger_cls = "🟠 주의 )", "orange"
+        elif max_predicted_fatigue >= 35: danger_lbl, danger_cls = "🟠 주의 ", "orange"
         else: danger_lbl, danger_cls = "🟢 안전", "green"
             
         st.markdown(f"<div style='padding: 15px; border-left: 5px solid {danger_cls}; background-color: #f9f9f9; font-weight: bold;'>{danger_lbl}</div>", unsafe_allow_html=True)
@@ -181,7 +184,7 @@ with col1:
 
 # 오른쪽: 지도
 with col2:
-    st.subheader(" 지도 ")
+    st.subheader("🗺️ 지도")
     nodes_dict = list(G.nodes(data=True))
     init_lat, init_lng = nodes_dict[0][1]['y'], nodes_dict[0][1]['x']
     
